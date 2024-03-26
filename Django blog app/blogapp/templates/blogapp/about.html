@@ -1,0 +1,16 @@
+{% extends 'blogapp/index.html'%}
+
+{% block title%}About{% endblock %}
+
+{% block content%}
+{% if request.user.is_authenticated %}
+    {% if request.user%}
+    <div class="items">
+        <div class="contents bg-light ">
+            <div class="text-uppercase h2 font-weight-bold">Hello, I am {{request.user.username}}</div>
+            <img src="{{userdp}}" alt="display picture" class="col-lg-4 rounded-bottom mb-3 p-0">
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

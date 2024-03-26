@@ -1,0 +1,35 @@
+{% extends 'blogapp/index.html'%}
+{% block title%}{{request.user.username}}'s' profile{% endblock %}
+
+{% block navbar%}
+<div class="navbar navbar-brand">
+    <a href="{% url 'profile'%}">Click to go back</a>
+</div>
+{% endblock navbar%}
+{% block content%}
+<div class="content-section2 container p-0 pt-2">
+    <div class="media m-1 border-bottom">
+        <div class="media-body pt-1">
+            <h2 class="text-muted pl-3 text-uppercase"><em>{{request.user.username}}'s Posts</em></h2>
+        </div>
+    </div>
+    {% if user_posts %}
+        {% for post in user_posts %}
+        <div class="container-lg bg-light p-1 border-bottom">
+            <h2 class="account-body ml-lg-4 h6 text-capitalize"><em class="text-uppercase h5 mr-2">{{post.title}}</em> {{post.date_posted}}</h2>
+            <p class="text-secondary ml-4">{{post.content}}</p>
+            <div class="post-edit-delete p-3">
+                <button type="button" class="post-edit-btn"><a href="{% url 'post-update' post.pk %}" class="text-decoration-none">Edit Post</a></button>
+                <button type="button" class="post-edit-btn"><a href="{% url 'post-delete' post.pk %}" class="text-decoration-none">Delete Post</a></button>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="container-lg bg-light p-1 border-bottom">
+            <h2 class="account-body ml-lg-4 h2 text-capitalize"><em class="text-uppercase h5 mr-2">No posts yet</em></h2>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
+{% block sidebar%}
+{% endblock sidebar %}

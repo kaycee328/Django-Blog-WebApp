@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title%}KC Technologies{% endblock %}</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}?{% now 'U'%}">
+</head>
+<body>
+        <!-- Modal to logout of the site -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to logout? </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="logout"><a href="{% url 'logout'%}">Logout</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main webpage content -->
+    <div class="body-content">
+        {% block navbar %}
+        <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
+            <!-- LEFT PART OF NAVBAR -->
+        {% if request.user.is_authenticated %}
+            <a class="navbar-brand" href="{% url 'blog-home'%}">THE SOCIAL NETWORK...</a>
+        {% else %}
+            <a class="navbar-brand" href="{% url 'login'%}">THE SOCIAL NETWORK...</a>
+        {% endif %}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+
+            <!-- RIGHT PART OF NAVBAR -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{% url 'blog-home'%}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog-about'%}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile'%}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Logout</button>
+                    </li>
+                  
+                {% else %}
+                    <li class="nav-item dropdown">
+                        <!-- Dropdown trigger button -->
+                        <button class="nav-link dropdown-toggle" type="button" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Login/Register
+                        </button>
+                        <!-- Dropdown menu -->
+                        <ul class="dropdown-menu mt-1" aria-labelledby="navbarDropdown">
+                            <li aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'login'%}">Login</a>
+                                <a class="dropdown-item" href="{% url 'register'%}">Register</a>
+                            </li>
+                        </ul>
+         
+                {% endif %}
+                </ul>
+            </div>
+        </nav>
+        {% endblock navbar %}
+
+
+        <!-- THE BODY OF THE PAGE -->
+        {% block body %}
+        <section class="content-container">
+            <!-- left-section where the posts are located -->
+            <div class="left-section">
+                {%if messages%}
+                    {%for message in messages%}
+                        <div class="alert alert-{{message.tags}}">{{message}}</div>
+                    {% endfor %}
+                {% endif %}
+                
+            {% block content %}
+                <div class="container-fluid bg-info text-uppercase font-weight-bold h3 text-lg-center p-1">
+                    HELLO "@{{request.user.username}}"!
+                </div>
+
+                <!-- This is where the posts are displayed from -->
+                {% for item in posts %}
+                    <div class="contents">
+                        <img src="{{item.author.profile.image.url}}" alt="dp" class="rounded-circle dp">
+                        <div class="media-body">
+                            {% if item.author != request.user %}
+                                <p class="author"><a href="{% url 'blog-profile' item.author.profile.user item.author.profile.pk %}" class="author text-decoration-none">@{{item.author}}</a></p>
+                            {% else %}
+                                <p class="author"><a href="{% url 'profile' %}" class="author text-decoration-none">@{{item.author}}</a></p>
+                            {% endif %}
+                            <small class="text-muted">
+                                {{item.date_posted}}
+                            </small>
+                        </div>
+                        <hr>
+                        <p class="title mb-0"><a href="{% url 'post-detail' item.pk %}" class="text-decoration-none">{{item.title}} </a></p>
+                        <hr>
+                        <p class="post-content">{{item.content}}</p>
+                    </div>
+                {% endfor %}  
+
+                <!-- Pagination code for the posts -->
+                {% if is_paginated %}
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1" class="btn btn-outline-info mb-4">First Page</a>
+                        <a href="?page={{page_obj.previous_page_number }}" class="btn btn-outline-info mb-4"><</a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <a href="?page={{num}}" class="btn btn-info mb-4">{{num}}</a>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} 
+                            <a href="?page={{num}}" class="btn btn-outline-info mb-4">{{num}}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{page_obj.next_page_number}}" class="btn btn-outline-info mb-4">></a>
+                        <a href="?page={{page_obj.paginator.num_pages}}" class="btn btn-outline-info mb-4">Last</a>
+                    {% endif %}
+                {% endif %}
+            {% endblock content %}
+            </div>
+            
+            <!-- right-section -->
+            {% block sidebar %}
+                <div class="right-section">
+                    <div class="sidebar">
+                        <h2>SIDEBAR</h2>
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugiat, mollitia!</p>
+                        <ul>
+                            <li><a href="{% url 'post-create'%}">Add post</a></li>
+                            <li><a href="#">Latest posts</a></li>
+                            <li><a href="#">Calendars</a></li>
+                        </ul>
+        
+                    </div>
+                </div>
+            {% endblock sidebar %}
+        </section>
+    {% endblock body %}
+    </div>
+
+        <!-- THE JAVASCRIPT LINKS AND FILES -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/index.js'%}?{% now 'U'%}"></script>
+    {% block newscript %}
+    {% endblock newscript %}
+
+</body>
+</html>

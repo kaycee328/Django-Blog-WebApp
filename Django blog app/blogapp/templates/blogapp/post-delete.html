@@ -1,0 +1,24 @@
+{% extends 'blogapp/index.html'%}
+{% block title%}create post{% endblock title %}
+{% load crispy_forms_tags %}
+
+{% block content%}
+    <div class="container content-section1">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="h6 p-0">Delete Post</div><hr class="mt-0 mb-lg-2">
+            <fieldset class="form-group h3 font-weight-normal pb-0 mb-0 pt-0 ">
+                <legend class="border-bottom m-0">
+                    {{ form|crispy }}
+                </legend>
+                <h3>Are you sure you want to delete "{{target.title}}"?</h3>
+            </fieldset>
+            <div class="form-group mb-1 mt-1">
+                <button type="submit" class="btn btn-outline-danger">Delete</button>
+                <button type="button" class="btn btn-outline-info"><a href="{% url 'post-detail' target.pk %}" class="text-decoration-none">Cancel</a></button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block sidebar%}
+{% endblock sidebar%}

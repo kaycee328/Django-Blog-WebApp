@@ -1,0 +1,24 @@
+{% extends 'blogapp/index.html'%}
+{% block title%}{{profile.user}}'s' profile{% endblock %}
+
+{% block content%}
+<div class="media content-section2 sidebar p-2">
+    <div class="user-profile m-1">
+        <div class="p-1">
+            <img class="rounded-circle account-img" src="{{ profile.image.url }}" alt="profile pic">
+            <div class="rounded-lg mt-1 text-center shadow bg-light"><a href="{{profile.image.url }}" target="_blank" class="text-decoration-none">View Profile Pic</a></div>
+        </div>
+        <div class="media-body pt-1">
+            <h2 class="account-body ml-lg-4 text-uppercase"><em>{{profile.user}}</em></h2>
+            <p class="text-secondary ml-4">Email: {{profile.user.email}}</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block sidebar%}
+{% endblock sidebar %}
+
+{% block newscript %}
+{% endblock newscript %}
+

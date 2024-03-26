@@ -1,0 +1,51 @@
+{% extends 'blogapp/index.html'%}
+{% block title%}{{request.user.username}}'s' profile{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content%}
+<div class="content-section2 sidebar p-2">
+    <div class="media m-1">
+        <div class="p-1">
+            <img class="rounded-circle account-img" src="{{ request.user.profile.image.url }}" alt="profile pic">
+            <div class="rounded-0 mt-1 text-center shadow bg-light"><a href="{{ request.user.profile.image.url }}" target="_blank">View Profile Pic</a></div>
+        </div>
+        <div class="media-body pt-1">
+            <h2 class="account-body ml-lg-4 text-uppercase"><em>{{request.user.username}}'s profile</em></h2>
+            <p class="text-secondary ml-4">Email: {{request.user.email}}</p>
+        </div>
+        <div class="list-group text-uppercase font-weight-bolder">
+            <span class="list-group-horizontal border rounded-pill p-2 bg-dark text-decoration-none"><a href="{% url 'blog-post' %}">My posts</a></span>
+        </div>
+    </div>
+    <form action="{% url 'profile'%}" method="post" class="p-3 mt-3" enctype="multipart/form-data">
+        {% csrf_token %}
+        <legend class="h6 p-0 h4 text-uppercase bolder">Update Profile</legend><hr class="mt-0 mb-lg-2">
+        <fieldset class="form-group h3 font-weight-normal pb-0 mb-0 pt-0 ">
+            <legend class="m-0">
+                {{ uform|crispy }}
+                {{ pform|crispy }}
+                <!-- {{ password|crispy }} -->
+            </legend>
+        </fieldset>
+        <div class="form-group mb-1 mt-1">
+            <button type="submit" class="btn btn-outline-info">Update</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
+
+{% block sidebar%}
+{% endblock sidebar %}
+
+{% block newscript %}
+    <script>
+        const links = document.getElementsByTagName('a')
+        console.log(links)
+        for(i=0; i<links.length; i++){
+            if (links[i].href == 'http://127.0.0.1:8000/media/profile_pics/astronaut.jpg'){
+                links[i].target = '_blank'
+            }
+        }
+    </script>
+{% endblock newscript %}
+
