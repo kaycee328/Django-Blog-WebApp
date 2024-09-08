@@ -4,54 +4,68 @@ from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ChangePassword
 from .models import Profile
 from django.views.generic import DetailView
-from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, PasswordResetDoneView
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordResetView,
+    PasswordResetConfirmView,
+    PasswordResetCompleteView,
+    PasswordResetDoneView,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+
 # from django.contrib.auth.forms import UserCreationForm
+
 
 # Create your views here.
 def register(request):
-    if request.method == "POST":  
-        form = UserRegisterForm(request.POST)  
+    if request.method == "POST":
+        form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
+            username = form.cleaned_data.get("username")
             messages.success(request, f'Account created for "{username}", login here!')
-            return redirect('login')       
+            return redirect("login")
     else:
         form = UserRegisterForm()
-    return render(request, 'users/register.html', {'form':form})
+    return render(request, "users/register.html", {"form": form})
+
 
 @login_required
 def profile(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        p_form = ProfileUpdateForm(
+            request.POST, request.FILES, instance=request.user.profile
+        )
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            messages.success(request, f'Your profile has been updated!')
-            return redirect('profile')
+            messages.success(request, f"Your profile has been updated!")
+            return redirect("profile")
     else:
         u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profile) 
+        p_form = ProfileUpdateForm(instance=request.user.profile)
 
     context = {
-        'uform': u_form,
-        'pform': p_form,
+        "uform": u_form,
+        "pform": p_form,
     }
-    return render(request, 'users/profile.html', context)
+    return render(request, "users/profile.html", context)
+
 
 class Login_user(LoginView):
-    template_name = 'users/login.html'
-    fields = '__all__'
+    template_name = "users/login.html"
     redirect_authenticated_user = True
 
     def get_success_url(self) -> str:
-        return reverse_lazy('blog-home')
+        return reverse_lazy("blog-home")
+
 
 class Logout_user(LogoutView):
-    template_name = 'users/logout.html'
+    template_name = "users/logout.html"
+
 
 # class Reset_Password_View(PasswordResetView):
 #     template_name = 'users/password_reset.html'

@@ -16,7 +16,7 @@
 
 document.addEventListener('DOMContentLoaded', function(){
     let currentPath = window.location.pathname
-    console.log(currentPath)
+    // console.log(currentPath)
     const links = document.querySelectorAll('.nav-link')
 
     for(i=0; i < links.length; i++){
